@@ -6,7 +6,11 @@ import {Professor} from './professor.model';
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']
 })
+
 export class AppComponent {
+  constructor(){
+    this.atualizarLocalStorage();
+  }
   editando = null;
   nome = null;
   descricao = null;
@@ -16,6 +20,13 @@ export class AppComponent {
   selecionado=null;
   codigo = null;
   novoCadastro = false;
+  date=null;
+  ativo=false;
+  tipo="principal";
+  periodo=null;
+  professor=null;
+  exibir=false;
+      
   disciplinas = [
     new Disciplina(1,'Língua Portuguesa', 'O objetivo norteador da BNCC de ' +
       'Língua Portuguesa é garantir a todos os alunos o acesso aos saberes ' +
@@ -66,24 +77,37 @@ export class AppComponent {
       'planeta no Sistema Solar e no Universo e da aplicação dos ' +
       'conhecimentos científicos nas várias esferas da vida humana. ' +
       'Essas aprendizagens, entre outras, possibilitam que os alunos ' +
-      'compreendam, expliquem e intervenham no mundo em que vivem.',new Professor('Ricardo'))
-  ];
+      'compreendam, expliquem e intervenham no mundo em que vivem.',new Professor('Ricardo')),
 
+  ];
+   
   salvar() {
     if (this.editando) {
       this.editando.nome = this.nome;
       this.editando.descricao = this.descricao;
       this.editando.codigo = this.codigo;
-      this.editar_ok = true;
+      this.editando.date = this.date;
+      this.editando.ativo = this.ativo;
+      this.editando.tipo = this.tipo;
+      this.editando.periodo = this.periodo;
+      this.editar_ok = true;     
     } else {
-      const d = new Disciplina(this.codigo, this.nome, this.descricao);
+
+      const d = new Disciplina(this.codigo, this.nome, this.descricao, this.professor, this.date, this.ativo, this.tipo, this.periodo);
       this.disciplinas.push(d);
+      localStorage.setItem("Disciplina", JSON.stringify(d));
       this.salvar_ok = true;
+      
+  
     }
     this.nome = null;
     this.descricao = null;
     this.editando = null;
     this.codigo = null;
+    this.date=null;
+    this.ativo=false;
+    this.tipo="principal";
+    this.periodo=null;
   }
 
   excluir(disciplina) {
@@ -105,6 +129,10 @@ export class AppComponent {
     this.nome = disciplina.nome;
     this.descricao = disciplina.descricao;
     this.codigo = disciplina.codigo;
+    this.date = disciplina.date;
+    this.ativo = disciplina.ativo;
+    this.tipo = disciplina.tipo;
+    this.periodo = disciplina.periodo;
     this.editando = disciplina;
   }
 
@@ -137,5 +165,15 @@ export class AppComponent {
   criarCadastro(){
   this.novoCadastro = true; 
   }
+  atualizarLocalStorage(){
+    if(localStorage.getItem("Disciplina"))
+    {
+       const z = JSON.parse(localStorage.getItem("Disciplina"));   
+       this.disciplinas.push(z);
+    }
+
+   
+  }
+ 
 
 }
